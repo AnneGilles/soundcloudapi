@@ -6,7 +6,7 @@ WRITE ME
 Installation
 ============
 
-Just depend in your buildout on the egg ``soundcloudiapi``.
+Just depend in your buildout on the egg ``soundcloudapi``.
 
 This package is tested with Python 2.6 and 2.7
 
