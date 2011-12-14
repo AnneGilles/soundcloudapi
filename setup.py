@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
-import sys, os
+import sys
+import os
 
 version = '1.0'
 shortdesc = 'Soundcloud RESTful Python Client based on restkit.'
@@ -15,8 +16,8 @@ setup(name='soundcloudapi',
       classifiers=[
             'Development Status :: 5 - Production/Stable',
             'Operating System :: OS Independent',
-            'Programming Language :: Python', 
-            'Topic :: Software Development',       
+            'Programming Language :: Python',
+            'Topic :: Software Development',
             'License :: OSI Approved :: BSD License',
       ],
       keywords='',
@@ -25,7 +26,7 @@ setup(name='soundcloudapi',
       url=u'http://github.com/bluedynamics/soundcloudapi',
       license='BSD',
       packages=find_packages('src'),
-      package_dir = {'': 'src'},
+      package_dir={'': 'src'},
       namespace_packages=[],
       include_package_data=True,
       zip_safe=True,
@@ -35,7 +36,7 @@ setup(name='soundcloudapi',
       ],
       tests_require=tests_require,
       test_suite="soundcloudapi.tests.test_suite",
-      extras_require = dict(
+      extras_require=dict(
           test=tests_require,
       ),
 )
