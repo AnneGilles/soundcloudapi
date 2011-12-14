@@ -34,10 +34,12 @@ ZEROPUT = {'Content-Length': '0'}
 ACCEPT = {'Accept': 'application/json'}
 ID_REGEXP = re.compile(r'https?://api.soundcloud.com/\S+?/([0-9]+)*')
 
+
 def private_chooser(filter, request):
     return request.method.upper != 'GET' \
            or request.parsed_url.path.startswith('/me') \
            or 'secret-token.json' in request.parsed_url.path
+
 
 def public_chooser(filter, request):
     return not private_chooser(filter, request) \
@@ -49,12 +51,15 @@ def soundcloud_flat_dict(data, baseprefix):
 
     def _flattening(current, prefix):
         # stream handling!
-        if hasattr(current, 'read'): # some kind of filelike, has also __iter__!
+        if hasattr(current,
+                   'read'):  # some kind of filelike, has also __iter__!
             new.add(prefix, current)
-        elif hasattr(current, 'items'): # some kind of dict
+        elif hasattr(current,
+                     'items'):  # some kind of dict
             for key, value in current.items():
                 _flattening(value, '%s[%s]' % (prefix, key))
-        elif hasattr(current, '__iter__'): # some kind of list
+        elif hasattr(current,
+                     '__iter__'):  # some kind of list
             for listvalue in current:
                 _flattening(listvalue, '%s[]' % prefix)
         else:
@@ -62,6 +67,7 @@ def soundcloud_flat_dict(data, baseprefix):
 
     _flattening(data, baseprefix)
     return new
+
 
 def prepare_payload(data, prefix):
     data = soundcloud_flat_dict(data, prefix)
@@ -110,7 +116,8 @@ class Base(object):
             resp = self._resource.get(path=path, params_dict=data,
                                       headers=ACCEPT)
         except ResourceNotFound, e:
-            return {'error': e.response.status, 'status': e.response.status_int}
+            return {'error': e.response.status,
+                    'status': e.response.status_int}
         else:
             self._check_response(resp, 'GET %s' % path, codes=retcodes)
         return self._to_dict(resp)
@@ -119,7 +126,6 @@ class Base(object):
         resp = self._resource.delete(path=path, headers=ACCEPT)
         self._check_response(resp, 'DELETE %s' % path)
         return self._to_dict(resp)
-
 
     def _put(self, path, data):
         if data is ZEROPUT:
@@ -149,7 +155,7 @@ class Base(object):
         path = path.strip('/')
         if path:
             return path
-        # empty string results in a '/' in restkit, so None need to be returned  
+        # empty string results in a '/' in restkit, so None need to be returned
         return None
 
     def _subresource_dispatcher(self,
@@ -164,7 +170,7 @@ class Base(object):
         path = self._make_path(subpath, scid)
         if delete:
             if 'DELETE' not in allowed_methods:
-                 raise SoundcloudException('DELETE is not permitted.')
+                raise SoundcloudException('DELETE is not permitted.')
             if scid is None:
                 raise SoundcloudException('ID is missing for DELETE.')
             return self._delete(path)
@@ -213,12 +219,13 @@ class IdFilterBase(IdBase):
             subpath, scid, delete, postdata, putdata, getdata, allowed_methods
         )
 
+
 class IdXorFilterBase(IdFilterBase):
 
     def __init__(self, authinfo, scid=None, filter=None):
         super(IdXorFilterBase, self).__init__(authinfo, scid, filter)
         if scid is not None != filter is not None:
-             raise SoundcloudException('Filter or Id, not both.')
+            raise SoundcloudException('Filter or Id, not both.')
 
     def _subresource_dispatcher(self,
                                 subpath=None,
@@ -256,6 +263,7 @@ class SharedToMixin(object):
 
     def shared_to_emails(self, emails=None, delete=False, replace=False):
         return self.__shared_to('emails', emails, delete, replace)
+
 
 class UserMixin(object):
 
@@ -298,6 +306,7 @@ class Users(IdFilterBase, UserMixin):
 
     _subpath = 'users'
 
+
 class Me(Base, UserMixin):
 
     _subpath = 'me'
@@ -310,7 +319,7 @@ class Me(Base, UserMixin):
 class SecretTokenMixin(object):
 
     def secret_token(self, token=None):
-        # XXX for some reason this dont work at all. 
+        # XXX for some reason this dont work at all.
         if token is not None:
             raise NotImplementedError('PUT possible, but not implemented due '
                                       'to missing docs at soundcloud.')
@@ -390,9 +399,11 @@ class Resolve(Base):
                                       params_dict=dict(url=url),
                                       headers=ACCEPT)
         except ResourceNotFound, e:
-            return {'error': e.response.status, 'status': e.response.status_int}
+            return {'error': e.response.status,
+                    'status': e.response.status_int}
         else:
-            self._check_response(resp, 'GET %s' % self._make_path(), codes=[302])
+            self._check_response(
+                resp, 'GET %s' % self._make_path(), codes=[302])
         match = ID_REGEXP.match(resp.headers['Location'])
         if match is not None:
             return match.group(1)
