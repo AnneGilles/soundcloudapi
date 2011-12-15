@@ -1,9 +1,8 @@
-
 flat dict
 =========
 
 We need to flatten the dict according to soundclouds very special and partly
-insane needs. Limitations are strong with dicts in lists, so i hope its never
+insane needs. Limitations are strong with dicts in lists, so i hope it's never
 needed for POST or PUT. Limitations are documented with this test too::
 
     >>> from soundcloudapi._api import soundcloud_flat_dict
